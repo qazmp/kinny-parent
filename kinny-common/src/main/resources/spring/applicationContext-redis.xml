@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+
+    <!--
+        load 外部属性文件 系统运行时 一般会涉及到系统部署的细节信息 通常把系统部署的细节信息定义在外部属性文件
+        与bean的定义信息分离开来 提高xml配置的可复用
+    -->
+
+    <context:property-placeholder location="classpath:properties/redis.properties" ignore-unresolvable="true"></context:property-placeholder>
+
+    <!--
+        Jedis池
+    -->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="minIdle" value="${redis.minIdle}"></property>
+        <property name="maxWaitMillis" value="${redis.maxWaitMillis}"></property>
+        <property name="testOnBorrow" value="${redis.testOnBorrow}"></property>
+    </bean>
+
+    <!--
+        spring整合Jedis
+    -->
+
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="hostName" value="${redis.host}"></property>
+        <property name="port" value="${redis.port}"></property>
+        <property name="database" value="${redis.database}"></property>
+        <property name="poolConfig" ref="jedisPoolConfig"></property>
+    </bean>
+
+
+    <!--
+        序列化 stringRedisSerialize 可以使用incre
+    -->
+
+    <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" id="stringRedisSerializer"></bean>
+
+    <!--
+        高度封装的redisTemplate 封装了对redis进行操作的方法
+    -->
+
+    <bean class="org.springframework.data.redis.core.RedisTemplate" id="redisTemplate">
+        <property name="connectionFactory" ref="jedisConnectionFactory"></property>
+        <property name="keySerializer" ref="stringRedisSerializer"></property>
+        <property name="valueSerializer" ref="stringRedisSerializer"></property>
+        <property name="hashKeySerializer" ref="stringRedisSerializer"></property>
+    </bean>
+
+</beans>

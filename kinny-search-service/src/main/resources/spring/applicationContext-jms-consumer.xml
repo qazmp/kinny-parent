@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:properties/application.properties"
+                                  ignore-unresolvable="true"></context:property-placeholder>
+
+    <bean class="org.apache.activemq.ActiveMQConnectionFactory" id="activeMQConnectionFactory">
+        <property name="brokerURL" value="${jms.brokerUrl}"></property>
+    </bean>
+
+    <bean class="org.springframework.jms.connection.SingleConnectionFactory" id="singleConnectionFactory">
+        <property name="targetConnectionFactory" ref="activeMQConnectionFactory"></property>
+    </bean>
+
+    <bean class="org.apache.activemq.command.ActiveMQQueue" id="solrAddQueue">
+        <constructor-arg name="name" value="kinny-queue-solr-add"></constructor-arg>
+    </bean>
+
+    <bean class="com.kinny.search.listener.SolrAddListener" id="solrAddListener"></bean>
+
+    <bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="singleConnectionFactory"></property>
+        <property name="destination" ref="solrAddQueue"></property>
+        <property name="messageListener" ref="solrAddListener"></property>
+    </bean>
+
+    <bean class="org.apache.activemq.command.ActiveMQQueue" id="solrDelQueue">
+        <constructor-arg name="name" value="kinny-queue-solr-del"></constructor-arg>
+    </bean>
+
+    <bean class="com.kinny.search.listener.SolrDelListener" id="solrDelListener"></bean>
+
+    <bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="singleConnectionFactory"></property>
+        <property name="destination" ref="solrDelQueue"></property>
+        <property name="messageListener" ref="solrDelListener"></property>
+    </bean>
+
+</beans>

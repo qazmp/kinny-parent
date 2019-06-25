@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <!--spring 整合mybatis-->
+    <!--加载属性文件
+        多模块工程 所有类路径下有关spring配置文件只能配置一次 或者忽略
+        精确引入
+    -->
+    <context:property-placeholder ignore-unresolvable="true"
+                                  location="classpath:properties/db.properties"/>
+
+
+    <!--配置数据源 连接池-->
+    <bean class="com.alibaba.druid.pool.DruidDataSource" id="dataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+        <property name="minIdle" value="${jdbc.minIdle}"/>
+    </bean>
+
+    <!--sql回话工厂bean spring管理mybatis上下文对象-->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+
+        <property name="configLocation" value="classpath:mybatis/mybatis-plugin.xml"/>
+    </bean>
+
+    <!--扫描映射配置文件-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" id="mapperScannerConfigurer">
+        <property name="basePackage" value="com.kinny.mapper"/>
+
+    </bean>
+
+
+</beans>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+
+    <context:property-placeholder location="classpath:properties/shiro.properties" ignore-unresolvable="true" />
+
+    <bean class="org.apache.shiro.spring.web.ShiroFilterFactoryBean" id="shiroFilter">
+        <property name="securityManager" ref="securityManager"></property>
+        <property name="loginUrl" value="/shoplogin.html"></property>
+        <property name="successUrl" value="/admin/index.html"></property>
+        <property name="unauthorizedUrl" value=""></property>
+        <property name="filterChainDefinitions">
+            <value>
+                /shoplogin.html = anon
+                /register.html = anon
+                /css/** = anon
+                /js/** = anon
+                /img/** = anon
+                /plugins/** = anon
+                /seller/add.do = anon
+                /seller/login.do = anon
+                /** = authc
+            </value>
+        </property>
+
+    </bean>
+
+    <!--安全管理器-->
+    <bean class="org.apache.shiro.web.mgt.DefaultWebSecurityManager" id="securityManager">
+        <property name="cacheManager" ref="ehcacheManager"></property>
+       <!-- <property name="authenticator" ref="realmAuthenticator"></property>-->
+        <property name="realms">
+            <list>
+                <ref bean="shiroRealm" />
+            </list>
+        </property>
+    </bean>
+
+    <!--模块realm认证器-->
+    <!--<bean class="org.apache.shiro.authc.pam.ModularRealmAuthenticator" id="realmAuthenticator">
+        &lt;!&ndash;维护凭证管理器 默认的不支持Hash密码加密&ndash;&gt;
+    </bean>-->
+
+    <bean class="com.kinny.shop.realm.ShiroRealm" id="shiroRealm">
+        <property name="credentialsMatcher" ref="credentialsMatcher"></property>
+        <property name="sellerService" ref="sellerService"></property>
+    </bean>
+
+    <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher" id="credentialsMatcher">
+        <property name="hashAlgorithmName" value="MD5"></property>
+        <property name="hashIterations" value="${shiro.password.md5.hashIterations}"></property>
+    </bean>
+
+    <!--eh缓存管理器-->
+    <bean class="org.apache.shiro.cache.ehcache.EhCacheManager" id="ehcacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:cache/ehcache.xml"></property>
+    </bean>
+
+
+    <dubbo:application name="kinny-shop-web"></dubbo:application>
+
+    <dubbo:registry address="zookeeper://192.168.25.130:2181"/>
+
+    <dubbo:reference interface="com.kinny.sellergoods.service.SellerService" id="sellerService" />
+
+
+
+</beans>

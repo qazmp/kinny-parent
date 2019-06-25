@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <context:property-placeholder location="classpath:properties/application.properties"
+                                  ignore-unresolvable="true"></context:property-placeholder>
+
+    <context:component-scan base-package="com.kinny.page.service.impl"></context:component-scan>
+
+    <bean class="org.apache.activemq.ActiveMQConnectionFactory" id="activeMQConnectionFactory">
+        <property name="brokerURL" value="${jms.brokerUrl}"></property>
+    </bean>
+
+    <bean class="org.springframework.jms.connection.SingleConnectionFactory" id="singleConnectionFactory">
+        <property name="targetConnectionFactory" ref="activeMQConnectionFactory"></property>
+    </bean>
+
+    <bean class="org.apache.activemq.command.ActiveMQTopic" id="pageAddTopic">
+        <constructor-arg name="name" value="kinny-topic-page-add"></constructor-arg>
+    </bean>
+
+    <bean class="com.kinny.page.listener.PageAddListener" id="pageAddListener"></bean>
+
+    <bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="singleConnectionFactory"></property>
+        <property name="destination" ref="pageAddTopic"></property>
+        <property name="messageListener" ref="pageAddListener"></property>
+    </bean>
+
+    <bean class="org.apache.activemq.command.ActiveMQTopic" id="pageDelTopic">
+        <constructor-arg name="name" value="kinny-topic-page-del"></constructor-arg>
+    </bean>
+
+    <bean class="com.kinny.page.listener.PageDelListener" id="pageDelListener"></bean>
+
+    <bean class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="singleConnectionFactory"></property>
+        <property name="destination" ref="pageDelTopic"></property>
+        <property name="messageListener" ref="pageDelListener"></property>
+    </bean>
+
+</beans>
