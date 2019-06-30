@@ -19,8 +19,8 @@ import java.util.List;
  * @author qgy
  * @create 2019/6/9 - 18:03
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath*:spring/applicationContext*.xml")
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration("classpath*:spring/applicationContext*.xml")
 public class SolrUtilTest {
 
     @Autowired
@@ -36,7 +36,7 @@ public class SolrUtilTest {
 
     }
 
-    @Test
+    //@Test
     public void testBatchDelete() {
         SolrDataQuery query = new SimpleQuery("*:*");
         this.solrTemplate.delete(query);

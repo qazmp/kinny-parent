@@ -57,7 +57,7 @@ public class ItemCatServiceImpl implements ItemCatService {
         TbItemCatExample.Criteria criteria = example.createCriteria();
         criteria.andParentIdEqualTo(parentId);
         List<TbItemCat> itemCatList = this.itemCatMapper.selectByExample(example);
-
+        // 缓存时机 每次更新数据时都会查询数据
         cacheTemplateId();
 
         return itemCatList;

@@ -20,6 +20,7 @@ import java.util.*;
  * @create 2019/5/15 - 8:46
  */
 @Service
+@Transactional
 public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
@@ -318,6 +319,9 @@ public class GoodsServiceImpl implements GoodsService {
             throw new DbException("商品的基本信息新增失败");
         goodsDesc.setGoodsId(goods.getId());
         int insert1 = this.goodsDescMapper.insert(goodsDesc);
+
+        // 运行时异常 数据库是否回滚
+        //int i = 1/0;
 
         if (insert1 != 1)
             throw new DbException("商品的描述信息新增失败");
