@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--shiroFilter 工厂bean 注意要和filterName节点文本值保持-->
+    <bean id="shiroFilter"
+          class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"></property>
+        <property name="loginUrl" value="http://localhost:9100/cas/login?service=http://localhost:9106/shiro-cas"></property>
+        <property name="filters">
+            <map>
+                <entry key="casFilter" value-ref="casFilter"></entry>
+                <entry key="logoutFilter" value-ref="logoutFilter"></entry>
+            </map>
+        </property>
+        <property name="filterChainDefinitions">
+            <value>
+                /shiro-cas = casFilter
+                /logout = logoutFilter
+                /register.html = anon
+                /css/** = anon
+                /img/** = anon
+                /js/** = anon
+                /plugins/** = anon
+                /user/registry.do = anon
+                /user/sendSms.do = anon
+                /login/principal.do = anon
+                /** = authc
+            </value>
+        </property>
+    </bean>
+
+    <!--casFilter-->
+    <bean id="casFilter"
+          class="org.apache.shiro.cas.CasFilter">
+        <property name="failureUrl" value="/home-index.html"></property>
+        <property name="successUrl" value="/home-index.html"></property>
+    </bean>
+
+    <bean id="logoutFilter"
+          class="org.apache.shiro.web.filter.authc.LogoutFilter">
+        <property name="redirectUrl" value="http://localhost:9100/cas/logout?service=http://localhost:9103"></property>
+    </bean>
+
+
+    <!--安全管理器-->
+    <bean id="securityManager"
+          class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="cacheManager" ref="cacheManager"></property>
+        <!--认证数据源-->
+        <property name="realm" ref="casAuthenticationRealm"></property>
+        <property name="subjectFactory" ref="subjectFactory"></property>
+    </bean>
+
+    <!--缓存-->
+    <bean id="cacheManager"
+          class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:cache/ehcache.xml"></property>
+    </bean>
+
+    <bean id="casAuthenticationRealm"
+          class="com.kinny.user.shiro.realm.ShiroCasAuthenticationRealm">
+        <!--cas服务端URL 用于验证ticket-->
+        <property name="casServerUrlPrefix" value="http://localhost:9100/cas"></property>
+        <!--cas客户端用于接收认证结果和用户信息-->
+        <property name="casService" value="http://localhost:9106/shiro-cas"></property>
+    </bean>
+
+    <bean id="subjectFactory"
+          class="org.apache.shiro.web.mgt.DefaultWebSubjectFactory">
+    </bean>
+
+    <!--处理权限注解-->
+    <bean id="lifecycleBeanPostProcessor"
+          class="org.apache.shiro.spring.LifecycleBeanPostProcessor"></bean>
+
+    <bean id="advisorAutoProxyCreator"
+          class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor"></bean>
+
+    <bean id="authorizationAttributeSourceAdvisor"
+          class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor"></bean>
+
+
+</beans>
