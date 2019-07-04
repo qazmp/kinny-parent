@@ -3,6 +3,7 @@ package com.kinny.pojo.group;
 import com.kinny.pojo.TbOrderItem;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public class CarGroup implements Serializable {
 
     private String sellerName;
 
-    private List<TbOrderItem> itemList;
+    private List<TbOrderItem> itemList = new ArrayList<>(); // 空集合 不能是null
 
     @Override
     public String toString() {
