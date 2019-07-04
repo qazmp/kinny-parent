@@ -12,7 +12,6 @@
     <artifactId>kinny-portal-web</artifactId>
     <packaging>war</packaging>
 
-    <name>kinny-portal-web Maven Webapp</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
