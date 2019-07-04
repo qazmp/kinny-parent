@@ -28,7 +28,9 @@ public class CartController {
     @RequestMapping("/CartList")
     public ResponseVo<List<CarGroup>> findCartList(HttpServletRequest request) {
         String cartListString = CookieUtil.getCookieValue(request, "cartList", "UTF-8");
-        cartListString = cartListString == null || cartListString == ""? "[]": cartListString;
+        if(cartListString == null || cartListString.equals("")) {
+            cartListString = "[]";
+        }
         List<CarGroup> carGroupList = JSON.parseArray(cartListString, CarGroup.class);
         return new ResponseVo<>(true, carGroupList);
     }

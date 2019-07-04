@@ -73,9 +73,12 @@ public class CartServiceImpl implements CartService {
             // 3.2 创建该商品的购物车明细并添加到购物车明细列表
             TbOrderItem orderItem = this.createOrderItem(item, num);
             cart.getItemList().add(orderItem);
+
+            // 3.3 添加到购物车列表
+            carGroupList.add(cart);
+
         }
 
-        carGroupList.add(cart);
 
         return carGroupList;
     }
