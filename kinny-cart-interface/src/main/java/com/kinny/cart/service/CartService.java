@@ -21,4 +21,18 @@ public interface CartService {
      */
     public List<CarGroup> addGoodsToCartList(List<CarGroup> carGroupList, Long itemId, Integer num);
 
+    /**
+     *  从远程购物车中获取当前用户的购物车
+     * @param username
+     * @return
+     */
+    public List<CarGroup> findCartListFromRedis(String username);
+
+    /**
+     *  添加商品到redis远程购物车
+     * @param username
+     * @param carGroupList
+     */
+    public void addGoodsToRedis(String username, List<CarGroup> carGroupList);
+
 }

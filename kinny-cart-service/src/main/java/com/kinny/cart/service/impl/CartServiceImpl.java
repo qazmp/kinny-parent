@@ -3,13 +3,16 @@ package com.kinny.cart.service.impl;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.kinny.cart.service.CartService;
 import com.kinny.common.exception.DbException;
+import com.kinny.common.pojo.em.CacheEnum;
 import com.kinny.mapper.TbItemMapper;
 import com.kinny.pojo.TbItem;
 import com.kinny.pojo.TbOrderItem;
 import com.kinny.pojo.group.CarGroup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +26,8 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private TbItemMapper itemMapper;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
     /**
@@ -81,6 +86,17 @@ public class CartServiceImpl implements CartService {
 
 
         return carGroupList;
+    }
+
+    @Override
+    public List<CarGroup> findCartListFromRedis(String username) {
+        List<CarGroup> carGroupList = (List<CarGroup>) this.redisTemplate.boundHashOps(CacheEnum.CART_REMOTE_HASH.code).get(username);
+        return carGroupList == null? new ArrayList<>(): carGroupList;
+    }
+
+    @Override
+    public void addGoodsToRedis(String username, List<CarGroup> carGroupList) {
+        this.redisTemplate.boundHashOps(CacheEnum.CART_REMOTE_HASH.code).put(username, carGroupList);
     }
 
     /**
