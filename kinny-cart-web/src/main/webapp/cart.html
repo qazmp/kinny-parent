@@ -88,9 +88,9 @@
 								
 								<li class="yui3-u-1-8"><span class="price">{{item.price}}</span></li>
 								<li class="yui3-u-1-8">
-									<a href="javascript:void(0)" class="increment mins">-</a>
+									<a href="javascript:void(0)" class="increment mins" ng-click="addGoodsToCartList(item.itemId, -1)">-</a>
 									<input autocomplete="off" type="text" value="{{item.num}}" minnum="1" class="itxt" />
-									<a href="javascript:void(0)" class="increment plus">+</a>
+									<a href="javascript:void(0)" class="increment plus" ng-click="addGoodsToCartList(item.itemId, 1)">+</a>
 								</li>
 								<li class="yui3-u-1-8"><span class="sum">{{item.totalFee}}</span></li>
 								<li class="yui3-u-1-8">
@@ -113,9 +113,9 @@
 					<a href="#none">清除下柜商品</a>
 				</div>
 				<div class="toolbar">
-					<div class="chosed">已选择<span>0</span>件商品</div>
+					<div class="chosed">已选择<span>{{totalVal.totalNum}}</span>件商品</div>
 					<div class="sumprice">
-						<span><em>总价（不含运费） ：</em><i class="summoney">¥16283.00</i></span>
+						<span><em>总价（不含运费） ：</em><i class="summoney">¥{{totalVal.totalFee}}</i></span>
 						<span><em>已节省：</em><i>-¥20.00</i></span>
 					</div>
 					<div class="sumbtn">
