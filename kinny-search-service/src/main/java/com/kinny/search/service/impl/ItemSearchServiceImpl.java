@@ -62,7 +62,13 @@ public class ItemSearchServiceImpl implements ItemSearchService {
     public void batchImportSku(List<TbItem> items) {
         System.out.println("items = [" + items + "]");
         // todo 有可能要审核的spu下没有 sku 应该是业务逻辑错误 应该有默认的sku
-        this.solrTemplate.saveBeans(items);
+        try {
+            this.solrTemplate.saveBeans(items);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("即将提交");
         this.solrTemplate.commit();
 
     }
@@ -101,10 +107,8 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         String sortField = (String) parameterMap.get("sortField");
 
 
-        // 1.1 关键字
+
         HighlightQuery query = new SimpleHighlightQuery();
-        Criteria criteria = new Criteria("item_keywords").is(keywords);
-        query.addCriteria(criteria);
 
         // 设置高亮选项
         HighlightOptions highlightOptions = new HighlightOptions();
@@ -112,6 +116,12 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         highlightOptions.setSimplePrefix("<em style='color:red'>");
         highlightOptions.setSimplePostfix("</em>");
         query.setHighlightOptions(highlightOptions);
+
+        // 1.1 关键字
+        Criteria criteria = new Criteria("item_keywords").is(keywords);
+        query.addCriteria(criteria);
+
+
 
         // 1.2 过滤
         FilterQuery filterQuery = new SimpleFilterQuery();
@@ -233,6 +243,7 @@ public class ItemSearchServiceImpl implements ItemSearchService {
 
         Criteria critetia = new Criteria("item_keywords").is(keywords);
         query.addCriteria(critetia);
+        // 设置分组域
         GroupOptions groupOptions = new GroupOptions();
         groupOptions.addGroupByField("item_category");
 
@@ -241,11 +252,11 @@ public class ItemSearchServiceImpl implements ItemSearchService {
         GroupPage<TbItem> page = this.solrTemplate.queryForGroupPage(query, TbItem.class);
 
         GroupResult<TbItem> groupResult = page.getGroupResult("item_category");
-        Page<GroupEntry<TbItem>> groupEntriesPage = groupResult.getGroupEntries();
+        Page<GroupEntry<TbItem>> groupEntriesPage = groupResult.getGroupEntries(); // 获取分组路口集合
         List<GroupEntry<TbItem>> groupEntryList = groupEntriesPage.getContent();
         List<String> list = new ArrayList<>();
         for (GroupEntry<TbItem> groupEntry : groupEntryList) {
-            String groupValue = groupEntry.getGroupValue();
+            String groupValue = groupEntry.getGroupValue(); // 获取分组值
             list.add(groupValue);
         }
 

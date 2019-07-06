@@ -35,4 +35,12 @@ public interface CartService {
      */
     public void addGoodsToRedis(String username, List<CarGroup> carGroupList);
 
+    /**
+     *  合并购物车列表
+     * @param carGroupList1
+     * @param carGroupList2
+     * @return
+     */
+    public List<CarGroup> mergeCartList(List<CarGroup> carGroupList1, List<CarGroup> carGroupList2);
+
 }

@@ -74,12 +74,14 @@ public class ItemPageServiceImpl implements ItemPageService {
         try {
             Template template = configuration.getTemplate("item.ftl");
             Map<String, Object> dataModel = new HashMap<>();
+
             dataModel.put("goods", tbGoods);
             dataModel.put("goodsDesc", tbGoodsDesc);
 
             String oneLevelCategory = this.itemCatMapper.selectByPrimaryKey(tbGoods.getCategory1Id()).getName();
             String towLevelCategory = this.itemCatMapper.selectByPrimaryKey(tbGoods.getCategory2Id()).getName();
             String threeLevelCategory = this.itemCatMapper.selectByPrimaryKey(tbGoods.getCategory3Id()).getName();
+
             dataModel.put("oneLevelCategory", oneLevelCategory);
             dataModel.put("towLevelCategory", towLevelCategory);
             dataModel.put("threeLevelCategory", threeLevelCategory);
@@ -87,10 +89,12 @@ public class ItemPageServiceImpl implements ItemPageService {
             TbItemExample example = new TbItemExample();
             TbItemExample.Criteria criteria = example.createCriteria();
             criteria.andGoodsIdEqualTo(goodsId);
-            criteria.andStatusEqualTo("1");
+            criteria.andStatusEqualTo("1"); // 上架
             example.setOrderByClause("is_default DESC"); // 默认
             List<TbItem> tbItems = this.itemMapper.selectByExample(example);
+
             dataModel.put("itemList", tbItems);
+
             out = new FileWriter(this.pageDir + goodsId + ".html");
             template.process(dataModel, out);
 

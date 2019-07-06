@@ -36,6 +36,12 @@ public interface GoodsService {
      */
     public GoodsGroup findOne(String id);
 
+    /**
+     *  修改商品的状态 （商品审核功能）
+     * @param id
+     * @param s
+     */
+    public void updateStatus(String id, String s);
 
     /**
      *  新增或者修改商品
@@ -43,12 +49,7 @@ public interface GoodsService {
      */
     public void save(GoodsGroup goodsGroup);
 
-    /**
-     *  修改商品的状态 （商品审核功能）
-     * @param id
-     * @param s
-     */
-    public void updateStatus(String id, String s);
+
 
     public void batchDelete(String [] idS);
 

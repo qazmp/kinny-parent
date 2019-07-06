@@ -99,6 +99,17 @@ public class CartServiceImpl implements CartService {
         this.redisTemplate.boundHashOps(CacheEnum.CART_REMOTE_HASH.code).put(username, carGroupList);
     }
 
+    @Override
+    public List<CarGroup> mergeCartList(List<CarGroup> carGroupList1, List<CarGroup> carGroupList2) {
+        for (CarGroup carGroup : carGroupList1) {
+            List<TbOrderItem> itemList = carGroup.getItemList();
+            for (TbOrderItem orderItem : itemList) {
+                carGroupList2 = this.addGoodsToCartList(carGroupList2, orderItem.getItemId(), orderItem.getNum());
+            }
+        }
+        return carGroupList2;
+    }
+
     /**
      *  根据商家ID判断购物车列表中是否含有该商家的购物车
      * @param carGroupList 购物车列表
