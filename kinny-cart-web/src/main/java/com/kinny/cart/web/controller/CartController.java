@@ -69,6 +69,12 @@ public class CartController {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
+
+        // 设置跨域源
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:9105");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+
+
         String principal = (String) SecurityUtils.getSubject().getPrincipal();
         System.err.println("principal = " + principal);
         try {

@@ -48,7 +48,7 @@ public class CartServiceImpl implements CartService {
 
         String sellerId = item.getSellerId();
 
-        CarGroup cart = this.getSellerCartFromCartList(carGroupList, Long.parseLong(sellerId));
+        CarGroup cart = this.getSellerCartFromCartList(carGroupList, sellerId);
 
         // 1 判断原来购物车列表中是否含有该商家的购物车
         if(cart != null) { // 2 含有该商家的购物车
@@ -116,7 +116,7 @@ public class CartServiceImpl implements CartService {
      * @param sellerId 商家ID
      * @return 有 返回该商家的购物车 没有 返回空
      */
-    private CarGroup getSellerCartFromCartList(List<CarGroup> carGroupList, Long sellerId) {
+    private CarGroup getSellerCartFromCartList(List<CarGroup> carGroupList, String sellerId) {
         for (CarGroup carGroup : carGroupList) {
             if(carGroup.getSellerId().equals(sellerId)) {
                 return carGroup;
@@ -166,7 +166,7 @@ public class CartServiceImpl implements CartService {
      */
     private CarGroup createCart(TbItem item) {
         CarGroup cartGroup = new CarGroup();
-        cartGroup.setSellerId(Long.parseLong(item.getSellerId()));
+        cartGroup.setSellerId(item.getSellerId());
         cartGroup.setSellerName(item.getSeller());
         return cartGroup;
     }

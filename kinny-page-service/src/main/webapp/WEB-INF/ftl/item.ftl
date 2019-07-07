@@ -21,7 +21,7 @@
         var specList = [
             <#list itemList as item>
                 {
-                    id: ${item.goodsId?c},
+                    id: ${item.id?c},
                     title: '${item.title}',
                     price: ${item.price?c},
                     spec: ${item.spec}

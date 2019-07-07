@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class CarGroup implements Serializable {
 
-    private Long sellerId;
+    private String sellerId;
 
     private String sellerName;
 
@@ -30,7 +30,7 @@ public class CarGroup implements Serializable {
                 '}';
     }
 
-    public CarGroup(Long sellerId, String sellerName, List<TbOrderItem> itemList) {
+    public CarGroup(String sellerId, String sellerName, List<TbOrderItem> itemList) {
         this.sellerId = sellerId;
         this.sellerName = sellerName;
         this.itemList = itemList;
@@ -39,11 +39,11 @@ public class CarGroup implements Serializable {
     public CarGroup() {
     }
 
-    public Long getSellerId() {
+    public String getSellerId() {
         return sellerId;
     }
 
-    public void setSellerId(Long sellerId) {
+    public void setSellerId(String sellerId) {
         this.sellerId = sellerId;
     }
 

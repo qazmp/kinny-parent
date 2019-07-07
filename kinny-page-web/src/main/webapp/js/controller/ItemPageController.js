@@ -1,83 +1,98 @@
-app.controller('ItemPageController', function($scope) {
+app.controller('ItemPageController', function($scope, $http) {
 
-	$scope.num = 1; // ¹ºÂòÊıÁ¿
-	
-	$scope.checkedSpec = {}; // Ñ¡ÖĞµÄ¹æ¸ñĞÅÏ¢
+    $scope.num = 1; // è´­ä¹°æ•°é‡
 
-	$scope.currentSku = {}; // µ±Ç°ÏÔÊ¾µÄsku
+    $scope.checkedSpec = {}; // é€‰ä¸­çš„è§„æ ¼ä¿¡æ¯
 
-	$scope.addNum = function(i) {
-	
-		$scope.num += i;
+    $scope.currentSku = {}; // å½“å‰æ˜¾ç¤ºçš„sku
 
-		if($scope.num < 1) {
-			$scope.num = 1;
-		}
-	}
-	/**
-	 *  ¼ÇÂ¼Ñ¡ÖĞµÄ¹æ¸ñ ÀûÓÃ¶ÔÏóÊôĞÔ±£´æ»úÖÆ
-	 */
-	$scope.addCheckedSpecification = function(spec, specOption) {
-		$scope.checkedSpec[spec] = specOption;
-		searchSku();
-		
-	}
-	
-	
-	/**
-	 * ¹æ¸ñÊÇ·ñÑ¡ÖĞ
-	 */
-	$scope.isChecked = function(spec, specOption) {
-		
-		if($scope.checkedSpec[spec] == specOption) {
-			return true;
-		}
-		return false;
-	}
+    $scope.addNum = function(i) {
 
-	$scope.initDefaultSku = function() {
-		
-		$scope.currentSku = specList[0];
-		$scope.checkedSpec = JSON.parse(JSON.stringify($scope.currentSku.spec));
-	
-	}
-	
-	/**
-	 * Æ¥ÅäÁ½¸ö¶ÔÏóÊÇ·ñÏàµÈ
-	 */
-	var objectEquals = function(obj1, obj2) {
-		
-		for(var key in obj1) {
-			if(obj1[key] != obj2[key]) {
-				return false;
-			}
-		}
-		for(var key in obj2) {
-			if(obj1[key] != obj2[key]) {
-				return false;
-			}
-		}
-		return true;
-			
-	}
-	
-	// ¸ù¾İÓÃ»§Ñ¡ÔñµÄ¹æ¸ñ ÕÒµ½Ö¸¶¨µÄsku
-	var searchSku = function() {
-		// Ñ¡Ôñ¹æ¸ñ¶ÔÓ¦µÄsku
-		for(var i = 0; i < specList.length; i ++) {
-			if(objectEquals($scope.checkedSpec, specList[i].spec)) {
-				$scope.currentSku = specList[i];
-				return ; 
-			}
-		}
-		// Ã»ÓĞÑ¡Ôñ¹æ¸ñµÄsku
-		$scope.checkedSpec = {id: -1, title: '------', price: 0};
-	}
-	
-	$scope.addTocat = function() {
-		alert("Ñ¡ÔñµÄsku id " + $scope.currentSku.id);
-	}
-	
+        $scope.num += i;
+
+        if($scope.num < 1) {
+            $scope.num = 1;
+        }
+    }
+    /**
+     *  è®°å½•é€‰ä¸­çš„è§„æ ¼ åˆ©ç”¨å¯¹è±¡å±æ€§ä¿å­˜æœºåˆ¶
+     */
+    $scope.addCheckedSpecification = function(spec, specOption) {
+        $scope.checkedSpec[spec] = specOption;
+        searchSku();
+
+    }
+
+
+    /**
+     * è§„æ ¼æ˜¯å¦é€‰ä¸­
+     */
+    $scope.isChecked = function(spec, specOption) {
+
+        if($scope.checkedSpec[spec] == specOption) {
+            return true;
+        }
+        return false;
+    }
+
+    $scope.initDefaultSku = function() {
+
+        $scope.currentSku = specList[0];
+        $scope.checkedSpec = JSON.parse(JSON.stringify($scope.currentSku.spec));
+
+    }
+
+    /**
+     * åŒ¹é…ä¸¤ä¸ªå¯¹è±¡æ˜¯å¦ç›¸ç­‰
+     */
+    var objectEquals = function(obj1, obj2) {
+
+        for(var key in obj1) {
+            if(obj1[key] != obj2[key]) {
+                return false;
+            }
+        }
+        for(var key in obj2) {
+            if(obj1[key] != obj2[key]) {
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    // æ ¹æ®ç”¨æˆ·é€‰æ‹©çš„è§„æ ¼ æ‰¾åˆ°æŒ‡å®šçš„sku
+    var searchSku = function() {
+        // é€‰æ‹©è§„æ ¼å¯¹åº”çš„sku
+        for(var i = 0; i < specList.length; i ++) {
+            if(objectEquals($scope.checkedSpec, specList[i].spec)) {
+                $scope.currentSku = specList[i];
+                return ;
+            }
+        }
+        // æ²¡æœ‰é€‰æ‹©è§„æ ¼çš„sku
+        $scope.checkedSpec = {id: -1, title: '------', price: 0};
+    }
+
+    /**
+	 *  æ·»åŠ skuæ•°æ®åˆ°è´­ç‰©è½¦
+	 *  açš„jsè„šæœ¬è®¿é—®bçš„åå°è·¯å¾„ jsè·¨åŸŸ
+	 *  w3c é»˜è®¤ä¸å…è®¸è·¨åŸŸè¯·æ±‚ å®‰å…¨
+     */
+    $scope.addTocat = function() {
+        //alert("é€‰æ‹©çš„sku id " + $scope.currentSku.id);
+        $http.get('http://localhost:9107/cart/addToCarts.do?itemId=' + $scope.currentSku.id + '&num=' + $scope.num,
+            {'withCredentials':true})
+            .success(function (response) {
+
+                if(!response.success) {
+                    alert(response.message);
+                }else {
+                    location.href = 'http://localhost:9107/cart.html';
+                }
+        });
+    }
+
 
 
 });
