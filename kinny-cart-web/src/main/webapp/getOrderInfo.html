@@ -15,6 +15,7 @@
 	<script src="js/base.js"></script>
 	<script src="js/service/CartService.js"></script>
 	<script src="js/service/AddressService.js"></script>
+	<script src="js/service/OrderService.js"></script>
 	<script src="js/controller/CartController.js"></script>
 
 </head>
@@ -234,7 +235,7 @@
 			<div class="fc-receiverInfo">寄送至:{{selectedAddress.address}} 收货人：{{selectedAddress.contact}} {{selectedAddress.mobile}}</div>
 		</div>
 		<div class="submit">
-			<a class="sui-btn btn-danger btn-xlarge" href="pay.html">提交订单</a>
+			<a class="sui-btn btn-danger btn-xlarge" ng-click="commitOrder()">提交订单</a>
 		</div>
 	</div>
 	<!-- 底部栏位 -->

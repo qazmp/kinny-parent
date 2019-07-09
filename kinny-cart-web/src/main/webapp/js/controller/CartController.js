@@ -1,4 +1,4 @@
-app.controller('CartController', function ($scope, CartService, AddressService) {
+app.controller('CartController', function ($scope, CartService, AddressService, OrderService) {
     // 购物车列表
     $scope.cartList = [];
     // 总值
@@ -79,6 +79,15 @@ app.controller('CartController', function ($scope, CartService, AddressService) 
         return $scope.order.paymentType == paymentType;
     }
 
+    
+    $scope.commitOrder = function () {
+        $scope.order.receiver = $scope.selectedAddress.contact;
+        $scope.order.receiverAreaName = $scope.selectedAddress.address;
+        $scope.order.receiverMobile = $scope.selectedAddress.mobile;
+        OrderService.createOrder($scope.order).success(function (response) {
+            alert(response.message);
+        });
+    }
 
     
 
