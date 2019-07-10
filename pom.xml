@@ -33,6 +33,8 @@
         <module>kinny-cart-web</module>
         <module>kinny-order-interface</module>
         <module>kinny-order-service</module>
+        <module>kinny-pay-interface</module>
+        <module>kinny-pay-service</module>
     </modules>
     <!--父项目pom-->
     <packaging>pom</packaging>

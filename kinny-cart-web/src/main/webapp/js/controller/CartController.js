@@ -85,7 +85,16 @@ app.controller('CartController', function ($scope, CartService, AddressService, 
         $scope.order.receiverAreaName = $scope.selectedAddress.address;
         $scope.order.receiverMobile = $scope.selectedAddress.mobile;
         OrderService.createOrder($scope.order).success(function (response) {
-            alert(response.message);
+            if(!response.success) {
+                alert(response.message);
+            }else {
+                if($scope.order.paymentType == 1) {
+                    location.href = 'pay.html';
+                }else {
+                    location.href = 'paysuccess.html';
+                }
+            }
+
         });
     }
 
