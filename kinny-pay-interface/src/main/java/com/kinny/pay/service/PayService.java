@@ -16,4 +16,8 @@ public interface PayService {
      */
     public Map<String, Object> createNative(String out_trade_no, String total_fee);
 
+    public boolean validatePayInformation(String out_trade_no, String total_fee);
+
+    public boolean pollTrandeIsPayment(String outTradeNo);
+
 }

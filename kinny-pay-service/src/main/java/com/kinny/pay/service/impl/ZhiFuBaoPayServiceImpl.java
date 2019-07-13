@@ -12,10 +12,13 @@ import com.alipay.demo.trade.model.builder.AlipayTradePrecreateRequestBuilder;
 import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
 import com.alipay.demo.trade.service.AlipayTradeService;
 import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
+import com.kinny.common.exception.TradeException;
 import com.kinny.pay.service.PayService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -35,6 +38,14 @@ public class ZhiFuBaoPayServiceImpl implements PayService {
     // 支付宝当面付2.0服务
     private static AlipayTradeService tradeService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    private String out_trade_no; // 临时存储
+    private String total_fee;
+
+
+
     static {
         /** 一定要在创建AlipayTradeService之前调用Configs.init()设置默认参数
          *  Configs会读取classpath下的zfbinfo.properties文件配置信息，如果找不到该文件则确认该文件是否在classpath目录
@@ -49,6 +60,9 @@ public class ZhiFuBaoPayServiceImpl implements PayService {
 
     @Override
     public Map<String, Object> createNative(String out_trade_no, String total_fee) {
+        this.redisTemplate.boundHashOps("payInformation").put(out_trade_no, total_fee);
+        // 支付宝平台 首次下单 订单状态默认是未支付
+        this.redisTemplate.boundHashOps("payStatus").put(out_trade_no, false);
 // (必填) 商户网站订单系统中唯一订单号，64个字符以内，只能包含字母、数字、下划线，
         // 需保证商户系统端不能重复，建议通过数据库sequence生成，
         String outTradeNo = out_trade_no;
@@ -100,9 +114,9 @@ public class ZhiFuBaoPayServiceImpl implements PayService {
                 .setSubject(subject).setTotalAmount(totalAmount).setOutTradeNo(outTradeNo)
                 .setUndiscountableAmount(undiscountableAmount).setSellerId(sellerId).setBody(body)
                 .setOperatorId(operatorId).setStoreId(storeId).setExtendParams(extendParams)
-                .setTimeoutExpress(timeoutExpress);
-                //                .setNotifyUrl("http://www.test-notify-url.com")//支付宝服务器主动通知商户服务器里指定的页面http路径,根据需要设置
-                //.setGoodsDetailList(goodsDetailList);
+                .setTimeoutExpress(timeoutExpress)
+                                .setNotifyUrl("http://mssjrc.natappfree.cc/pay/alipayCallBack.do")//支付宝服务器主动通知商户服务器里指定的页面http路径,根据需要设置
+                .setGoodsDetailList(goodsDetailList);
 
         AlipayF2FPrecreateResult result = tradeService.tradePrecreate(builder);
         switch (result.getTradeStatus()) {
@@ -140,6 +154,32 @@ public class ZhiFuBaoPayServiceImpl implements PayService {
                 break;
         }
         return new HashMap<>();
+    }
+
+    @Override
+    public boolean validatePayInformation(String out_trade_no, String total_fee) {
+        System.out.println("out_trade_no = " + out_trade_no);
+        System.out.println("total_fee = " + total_fee);
+        String total_fee1 = (String) this.redisTemplate.boundHashOps("payInformation").get(out_trade_no);
+        System.out.println("total_fee1 = " + total_fee1);
+        Double aDouble = Double.valueOf(total_fee);
+        Double aDouble1 = Double.valueOf(total_fee1);
+        if(!aDouble.equals(aDouble1)) {
+            return false;
+        }
+        // 跟新订单的状态
+        this.redisTemplate.boundHashOps("payStatus").put(out_trade_no, true);
+        return true;
+    }
+
+    @Override
+    public boolean pollTrandeIsPayment(String outTradeNo) {
+        Object payStatus = this.redisTemplate.boundHashOps("payStatus").get(outTradeNo);
+        if (payStatus == null) {
+            // 支付宝订单不存在 订单过期
+            throw new TradeException("订单已过期");
+        }
+        return (boolean)payStatus;
     }
 
     // 简单打印应答

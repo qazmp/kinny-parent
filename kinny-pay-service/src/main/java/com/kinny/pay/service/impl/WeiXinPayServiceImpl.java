@@ -75,4 +75,14 @@ public class WeiXinPayServiceImpl implements PayService {
             return new HashMap<>();
         }
     }
+
+    @Override
+    public boolean validatePayInformation(String out_trade_no, String total_fee) {
+        return false;
+    }
+
+    @Override
+    public boolean pollTrandeIsPayment(String outTradeNo) {
+        return false;
+    }
 }

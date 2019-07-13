@@ -79,7 +79,9 @@ app.controller('CartController', function ($scope, CartService, AddressService, 
         return $scope.order.paymentType == paymentType;
     }
 
-    
+    /**
+     *  创建订单 并清空购物车
+     */
     $scope.commitOrder = function () {
         $scope.order.receiver = $scope.selectedAddress.contact;
         $scope.order.receiverAreaName = $scope.selectedAddress.address;
@@ -97,6 +99,9 @@ app.controller('CartController', function ($scope, CartService, AddressService, 
 
         });
     }
+
+    //*******************************************************
+
 
     
 

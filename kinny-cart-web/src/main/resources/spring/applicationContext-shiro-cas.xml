@@ -25,6 +25,7 @@
                 /cart.html = anon
                 /cart/*.do = anon
                 /pay/*.do = anon
+                <!--/pay.html = anon-->
                 /** = authc
             </value>
         </property>
