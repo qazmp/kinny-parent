@@ -24,6 +24,7 @@
                 /plugins/** = anon
                 /cart.html = anon
                 /cart/*.do = anon
+                /pay/*.do = anon
                 /** = authc
             </value>
         </property>
