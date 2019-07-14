@@ -77,9 +77,10 @@ public class WeiXinPayServiceImpl implements PayService {
     }
 
     @Override
-    public boolean validatePayInformation(String out_trade_no, String total_fee) {
+    public boolean validatePayInformation(String out_trade_no, String total_fee, String trade_status) {
         return false;
     }
+
 
     @Override
     public boolean pollTrandeIsPayment(String outTradeNo) {

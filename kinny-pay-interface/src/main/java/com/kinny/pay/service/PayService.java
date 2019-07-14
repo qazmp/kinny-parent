@@ -16,7 +16,13 @@ public interface PayService {
      */
     public Map<String, Object> createNative(String out_trade_no, String total_fee);
 
-    public boolean validatePayInformation(String out_trade_no, String total_fee);
+    /**
+     *  支付宝异步通知 验证参数 同时更新订单状态 redis 查询订单
+     * @param out_trade_no
+     * @param total_fee
+     * @return
+     */
+    public boolean validatePayInformation(String out_trade_no, String total_fee, String trade_status);
 
     public boolean pollTrandeIsPayment(String outTradeNo);
 

@@ -6,12 +6,16 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.demo.trade.config.Configs;
 import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
 import com.kinny.common.exception.TradeException;
+import com.kinny.order.service.OrderService;
 import com.kinny.pay.service.PayService;
+import com.kinny.pojo.TbPayLog;
 import com.kinny.util.IdWorker;
 import com.kinny.vo.ResponseVo;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,8 +36,14 @@ public class PayController {
     @Reference(timeout = 6000)
     private PayService zhiFuBaoPayServiceImpl;
 
+    @Reference
+    private OrderService orderService;
+
     @Value("${alipay_public_key}")
     private String alipayPublicKey;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     static {
         /** 一定要在创建AlipayTradeService之前调用Configs.init()设置默认参数
@@ -46,10 +56,11 @@ public class PayController {
     public Map<String, Object> createNative() {
         // 获取当前实体
         String principal = getPrincipal();
-        IdWorker idWorker = new IdWorker();
+        TbPayLog payLog = (TbPayLog) this.redisTemplate.boundHashOps("payLog").get(principal);
+
         Map<String, Object> aNative = null;
         try {
-            aNative = this.zhiFuBaoPayServiceImpl.createNative(idWorker.nextId() + "", "1");
+            aNative = this.zhiFuBaoPayServiceImpl.createNative(payLog.getOutTradeNo(), payLog.getTotalFee() + "");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -90,9 +101,9 @@ public class PayController {
         String total_amount = params.get("total_amount");
         total_amount = (Double.parseDouble(total_amount) * 100) + "";
 
-        boolean b = this.zhiFuBaoPayServiceImpl.validatePayInformation(params.get("out_trade_no"), total_amount);
-        System.out.println("b = " + b);
+        boolean b = this.zhiFuBaoPayServiceImpl.validatePayInformation(params.get("out_trade_no"), total_amount, params.get("trade_status"));
         if (b) {
+            this.orderService.paySuccessUpdatePayLogAndOrder(params.get("out_trade_no"), params.get("trade_no"));
             return "success";
         }else {
             return "failure";
@@ -114,8 +125,10 @@ public class PayController {
             } catch (TradeException e) {
                 return new ResponseVo(false, e.getMessage());
             }
-            if (b)
+            if (b) {
+                this.redisTemplate.boundHashOps("payLog").delete(this.getPrincipal());
                 return new ResponseVo(true, "用户已支付");
+            }
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {

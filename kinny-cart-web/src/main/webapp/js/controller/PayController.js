@@ -1,4 +1,4 @@
-app.controller('PayController', function ($scope, PayService) {
+app.controller('PayController', function ($scope, PayService, $location) {
 
     $scope.pay = {};
 
@@ -19,12 +19,18 @@ app.controller('PayController', function ($scope, PayService) {
     var isPayment = function () {
         PayService.pollIsPayment($scope.pay.out_trade_no).success(function (response) {
             if(response.success && response.message == "用户已支付") {
-                location.href = 'paysuccess.html';
+                location.href = 'paysuccess.html#?total_fee=' + $scope.pay.total_fee;
             }else {
                 $scope.initNative();
             }
         });
 
+    }
+
+    $scope.total_fee = 0;
+
+    $scope.initTotalFee = function () {
+        $scope.total_fee = $location.search()['total_fee'];
     }
 
 

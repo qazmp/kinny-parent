@@ -115,7 +115,7 @@ public class ZhiFuBaoPayServiceImpl implements PayService {
                 .setUndiscountableAmount(undiscountableAmount).setSellerId(sellerId).setBody(body)
                 .setOperatorId(operatorId).setStoreId(storeId).setExtendParams(extendParams)
                 .setTimeoutExpress(timeoutExpress)
-                                .setNotifyUrl("http://mssjrc.natappfree.cc/pay/alipayCallBack.do")//支付宝服务器主动通知商户服务器里指定的页面http路径,根据需要设置
+                                .setNotifyUrl("http://5uueht.natappfree.cc/pay/alipayCallBack.do")//支付宝服务器主动通知商户服务器里指定的页面http路径,根据需要设置
                 .setGoodsDetailList(goodsDetailList);
 
         AlipayF2FPrecreateResult result = tradeService.tradePrecreate(builder);
@@ -157,7 +157,7 @@ public class ZhiFuBaoPayServiceImpl implements PayService {
     }
 
     @Override
-    public boolean validatePayInformation(String out_trade_no, String total_fee) {
+    public boolean validatePayInformation(String out_trade_no, String total_fee, String trade_status) {
         System.out.println("out_trade_no = " + out_trade_no);
         System.out.println("total_fee = " + total_fee);
         String total_fee1 = (String) this.redisTemplate.boundHashOps("payInformation").get(out_trade_no);
@@ -168,7 +168,15 @@ public class ZhiFuBaoPayServiceImpl implements PayService {
             return false;
         }
         // 跟新订单的状态
-        this.redisTemplate.boundHashOps("payStatus").put(out_trade_no, true);
+        if("TRADE_SUCCESS".equals(trade_status)) { // 交易支付成功
+            this.redisTemplate.boundHashOps("payStatus").put(out_trade_no, true);
+        } else if("TRADE_FINISHED".equals(trade_status)){ // 交易结束，不可退款
+            this.redisTemplate.boundHashOps("payStatus").delete(out_trade_no);
+        }
+        else {
+            this.redisTemplate.boundHashOps("payStatus").put(out_trade_no, false);
+        }
+
         return true;
     }
 

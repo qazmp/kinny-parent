@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class TbPayLog implements Serializable {
-    private String outTradeNo;
+    private String outTradeNo; // 支付订单号 与订单号一对多
 
     private Date createTime;
 
@@ -14,11 +14,11 @@ public class TbPayLog implements Serializable {
 
     private String userId;
 
-    private String transactionId;
+    private String transactionId; // 支付平台流水号
 
     private String tradeState;
 
-    private String orderList;
+    private String orderList; // 订单号拼接
 
     private String payType;
 
