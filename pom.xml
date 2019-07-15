@@ -35,6 +35,9 @@
         <module>kinny-order-service</module>
         <module>kinny-pay-interface</module>
         <module>kinny-pay-service</module>
+        <module>kinny-seckill-interface</module>
+        <module>kinny-seckill-service</module>
+        <module>kinny-seckill-web</module>
     </modules>
     <!--父项目pom-->
     <packaging>pom</packaging>
