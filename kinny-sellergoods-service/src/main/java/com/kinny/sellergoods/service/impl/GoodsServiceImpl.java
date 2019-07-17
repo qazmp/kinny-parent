@@ -315,6 +315,8 @@ public class GoodsServiceImpl implements GoodsService {
         // 商品状态默认是未审核
         goods.setAuditStatus(GoodsEnum.NOT_CHECK.getCode());
         int insert = this.goodsMapper.insert(goods);
+        // 运行时异常 测试事务是否回滚
+        //int i = 1/0;
         if (insert != 1)
             throw new DbException("商品的基本信息新增失败");
         goodsDesc.setGoodsId(goods.getId());
