@@ -58,6 +58,7 @@ public class SeckillGoodsServiceImpl implements SeckillGoodsService {
             }
         }else {
             System.out.println("直接从redis中读取数据 并未访问数据库");
+            // todo 缓存中秒杀商品过期
         }
 
 

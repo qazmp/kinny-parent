@@ -13,4 +13,10 @@
     <dubbo:annotation package="com.kinny.seckill.service.impl"></dubbo:annotation>
 
 
+    <bean id="idWorker"
+          class="com.kinny.util.IdWorker">
+        <constructor-arg name="datacenterId" value="0"></constructor-arg>
+        <constructor-arg name="workerId" value="0"></constructor-arg>
+    </bean>
+
 </beans>

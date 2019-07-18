@@ -1,4 +1,4 @@
-app.controller('SeckillGppdsController', function ($scope, SeckillGoodsService, $location, $interval) {
+app.controller('SeckillGppdsController', function ($scope, SeckillGoodsService, SeckillOrderService, $location, $interval) {
 
     // 秒杀的商品列表
     $scope.list = [];
@@ -75,6 +75,17 @@ app.controller('SeckillGppdsController', function ($scope, SeckillGoodsService, 
             str += second;
         }
         return str;
+    }
+    
+   $scope.commitOrder1 = function (id) {
+        SeckillOrderService.submitOrder(id).success(function (response) {
+            if(!response.success) {
+                alert(response.message);
+            }else {
+                alert(response.message);
+                location.href = 'pay.html';
+            }
+        });
     }
 
 });

@@ -23,7 +23,8 @@
                 /js/** = anon
                 /plugins/** = anon
                 /seckillGoods/*.do = anon
-                /seckill-index.html = anon
+                /seckillOrder/*.do = anon
+                /seckill-*.html = anon
                 /** = authc
             </value>
         </property>

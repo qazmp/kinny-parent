@@ -25,4 +25,5 @@ public interface SeckillGoodsService {
     public tbSeckillGoods findOneFromRedis(String id);
 
 
+
 }
