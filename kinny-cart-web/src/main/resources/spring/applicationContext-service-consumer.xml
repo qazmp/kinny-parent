@@ -8,6 +8,9 @@
     <context:property-placeholder location="classpath:properties/zfbinfo.properties"
                                   ignore-unresolvable="true"></context:property-placeholder>
 
+    <context:property-placeholder location="classpath:properties/zfb.properties"
+                                  ignore-unresolvable="true"></context:property-placeholder>
+
     <dubbo:application name="kinny-cart-web"></dubbo:application>
 
     <dubbo:registry address="zookeeper://192.168.25.130:2181"></dubbo:registry>

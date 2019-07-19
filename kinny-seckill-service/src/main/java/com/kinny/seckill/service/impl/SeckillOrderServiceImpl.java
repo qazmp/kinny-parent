@@ -3,6 +3,7 @@ package com.kinny.seckill.service.impl;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.kinny.common.exception.CacheException;
 import com.kinny.mapper.tbSeckillGoodsMapper;
+import com.kinny.mapper.tbSeckillOrderMapper;
 import com.kinny.pojo.tbSeckillGoods;
 import com.kinny.pojo.tbSeckillOrder;
 import com.kinny.seckill.service.SeckillOrderService;
@@ -25,6 +26,9 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
 
     @Autowired
     private tbSeckillGoodsMapper seckillGoodsMapper;
+
+    @Autowired
+    private tbSeckillOrderMapper seckillOrderMapper;
 
     @Autowired
     private IdWorker idWorker;
@@ -71,6 +75,54 @@ public class SeckillOrderServiceImpl implements SeckillOrderService {
         seckillOrder.setCreateTime(new Date()); // 创建
         seckillOrder.setStatus("0"); // 未支付订单
         System.out.println("创建并缓存秒杀订单对象 [redis]");
-        this.redisTemplate.boundHashOps("seckillOrderList").put(principal, seckillGoods);
+        this.redisTemplate.boundHashOps("seckillOrderList").put(principal, seckillOrder);
+    }
+
+    @Override
+    public void updateSeckillOrderDuarbilityCacheToDatabase(String principal, String transaction_id) {
+        if (principal == null) {
+            throw new IllegalArgumentException("认证的用户名称为空");
+        }
+        tbSeckillOrder seckillOrder = (tbSeckillOrder) this.redisTemplate.boundHashOps("seckillOrderList").get(principal);
+        if (seckillOrder == null) {
+            throw new CacheException("没有该用户订单");
+        }
+        if(!"0".equals(seckillOrder.getStatus())) {
+            throw new CacheException("该用户秒杀订单状态异常");
+        }
+        seckillOrder.setStatus("1"); // 完成了付款
+        seckillOrder.setPayTime(new Date()); // 支付的时间
+        seckillOrder.setTransactionId(transaction_id); // 交易平台交易流水号
+
+        // 持久化
+        this.seckillOrderMapper.insert(seckillOrder);
+
+        // 删除缓存中
+        this.redisTemplate.boundHashOps("seckillOrderList").delete(principal);
+    }
+
+    @Override
+    public void deleteOrderAndResetStock(String principal, String id) {
+        // 1 获取缓存中的订单
+        tbSeckillOrder seckillOrder = (tbSeckillOrder) this.redisTemplate.boundHashOps("seckillOrderList").get(principal);
+
+        if (seckillOrder != null) {
+            // 2 删除缓存中的订单
+            this.redisTemplate.boundHashOps("seckillOrderList").delete(principal);
+
+            // 3 恢复秒杀商品库存
+            tbSeckillGoods seckillGoods = (tbSeckillGoods) this.redisTemplate.boundHashOps("seckillGoodsList").get(seckillOrder.getSeckillId() + "");
+            if (seckillGoods == null) { // 商品库存是最后一件超时
+                seckillGoods = this.seckillGoodsMapper.selectByPrimaryKey(seckillOrder.getSeckillId()); // 将数据库中的
+                seckillGoods.setStockCount(1); // 库存量1
+                this.redisTemplate.boundHashOps("seckillGoodsList").put(seckillGoods.getId() + "", seckillGoods);
+            }else {
+                seckillGoods.setStockCount(seckillGoods.getStockCount() + 1); // 恢复库存
+                this.redisTemplate.boundHashOps("seckillGoodsList").put(seckillGoods.getId() + "", seckillGoods);
+            }
+            System.out.println("订单超时，恢复秒杀商品的库存。。。。。。。。。。。。。。。");
+        }
+
+
     }
 }

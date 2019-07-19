@@ -76,7 +76,10 @@ app.controller('SeckillGppdsController', function ($scope, SeckillGoodsService, 
         }
         return str;
     }
-    
+    /**
+     *  提交订单
+     * @param id
+     */
    $scope.commitOrder1 = function (id) {
         SeckillOrderService.submitOrder(id).success(function (response) {
             if(!response.success) {
@@ -87,5 +90,6 @@ app.controller('SeckillGppdsController', function ($scope, SeckillGoodsService, 
             }
         });
     }
+
 
 });

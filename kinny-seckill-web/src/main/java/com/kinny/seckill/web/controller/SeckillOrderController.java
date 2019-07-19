@@ -2,11 +2,17 @@ package com.kinny.seckill.web.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.kinny.common.exception.CacheException;
+import com.kinny.pay.service.PayService;
+import com.kinny.pojo.tbSeckillOrder;
 import com.kinny.seckill.service.SeckillOrderService;
 import com.kinny.vo.ResponseVo;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 /**
  * @author qgy
@@ -18,6 +24,7 @@ public class SeckillOrderController {
 
     @Reference
     private SeckillOrderService seckillOrderService;
+
 
 
     /**
@@ -46,6 +53,7 @@ public class SeckillOrderController {
 
         return new ResponseVo(true, "抢购成功 请及时支付");
     }
+
 
 
 }

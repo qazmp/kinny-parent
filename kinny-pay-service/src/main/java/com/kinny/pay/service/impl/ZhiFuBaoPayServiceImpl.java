@@ -3,7 +3,12 @@ package com.kinny.pay.service.impl;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
 import com.alipay.api.AlipayResponse;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradeCancelRequest;
+import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.demo.trade.config.Configs;
 import com.alipay.demo.trade.model.ExtendParams;
@@ -59,7 +64,7 @@ public class ZhiFuBaoPayServiceImpl implements PayService {
     }
 
     @Override
-    public Map<String, Object> createNative(String out_trade_no, String total_fee) {
+    public Map<String, Object> createNative(String out_trade_no, String total_fee, String notifyUrl) {
         this.redisTemplate.boundHashOps("payInformation").put(out_trade_no, total_fee);
         // 支付宝平台 首次下单 订单状态默认是未支付
         this.redisTemplate.boundHashOps("payStatus").put(out_trade_no, false);
@@ -115,7 +120,7 @@ public class ZhiFuBaoPayServiceImpl implements PayService {
                 .setUndiscountableAmount(undiscountableAmount).setSellerId(sellerId).setBody(body)
                 .setOperatorId(operatorId).setStoreId(storeId).setExtendParams(extendParams)
                 .setTimeoutExpress(timeoutExpress)
-                                .setNotifyUrl("http://5uueht.natappfree.cc/pay/alipayCallBack.do")//支付宝服务器主动通知商户服务器里指定的页面http路径,根据需要设置
+                                .setNotifyUrl(notifyUrl)//支付宝服务器主动通知商户服务器里指定的页面http路径,根据需要设置
                 .setGoodsDetailList(goodsDetailList);
 
         AlipayF2FPrecreateResult result = tradeService.tradePrecreate(builder);
@@ -188,6 +193,40 @@ public class ZhiFuBaoPayServiceImpl implements PayService {
             throw new TradeException("订单已过期");
         }
         return (boolean)payStatus;
+    }
+
+    @Override
+    public Map<String, String> cancelPayOrder(String out_trade_no) {
+        AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipaydev.com/gateway.do",Configs.getAppid(),Configs.getPrivateKey(),"json","GBK",Configs.getAlipayPublicKey(),Configs.getSignType());
+        System.out.println("getAppid " +  Configs.getAppid());
+        System.out.println("getPrivateKey " +  Configs.getPrivateKey());
+        System.out.println("getAlipayPublicKey " +  Configs.getAlipayPublicKey());
+        System.out.println("getSignType " +  Configs.getSignType());
+        System.out.println("out_trade_no = [" + out_trade_no + "]");
+        AlipayTradeCancelRequest request = new AlipayTradeCancelRequest();
+        Map<String, String> map = new HashMap();
+        map.put("out_trade_no", out_trade_no);
+        System.out.println(JSON.toJSONString(map));
+        request.setBizContent(JSON.toJSONString(map));
+        AlipayTradeCancelResponse response = null;
+        try {
+            response = alipayClient.execute(request);
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
+
+        Map<String, String> map1 = new HashMap<>();
+
+        if(response.isSuccess()){
+            System.out.println("调用成功");
+            String action = response.getAction();
+            String body = response.getBody();
+            System.out.println("body = " + body);
+            map1.put("msg", response.getMsg());
+        } else {
+            System.out.println("调用失败");
+        }
+        return map1;
     }
 
     // 简单打印应答

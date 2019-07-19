@@ -14,5 +14,19 @@ public interface SeckillOrderService {
      */
     public void submitOrder(String principal, String id);
 
+    /**
+     *  更新redis中的订单状态 并持久化到数据库
+     * @param principal
+     * @param transaction_id
+     */
+    public void updateSeckillOrderDuarbilityCacheToDatabase(String principal, String transaction_id);
+
+    /**
+     *  订单超时删除订单并恢复库存
+     * @param principal
+     * @param id
+     */
+    public void deleteOrderAndResetStock(String principal, String id);
+
 
 }

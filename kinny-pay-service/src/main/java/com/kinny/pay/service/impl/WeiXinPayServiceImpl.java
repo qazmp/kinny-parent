@@ -32,7 +32,7 @@ public class WeiXinPayServiceImpl implements PayService {
 
 
     @Override
-    public Map<String, Object> createNative(String out_trade_no, String total_fee) {
+    public Map<String, Object> createNative(String out_trade_no, String total_fee, String notifyurl) {
         System.err.println("---------------1-----------------------");
         // 1 封装参数
         Map<String, String> mapParam = new HashMap<>();
@@ -85,5 +85,10 @@ public class WeiXinPayServiceImpl implements PayService {
     @Override
     public boolean pollTrandeIsPayment(String outTradeNo) {
         return false;
+    }
+
+    @Override
+    public Map<String, String> cancelPayOrder(String out_trade_no) {
+        return null;
     }
 }

@@ -24,6 +24,7 @@
                 /plugins/** = anon
                 /seckillGoods/*.do = anon
                 /seckillOrder/*.do = anon
+                /pay/*.do = anon
                 /seckill-*.html = anon
                 /** = authc
             </value>
