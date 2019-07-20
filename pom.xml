@@ -38,6 +38,7 @@
         <module>kinny-seckill-interface</module>
         <module>kinny-seckill-service</module>
         <module>kinny-seckill-web</module>
+        <module>kinny-task-service</module>
     </modules>
     <!--父项目pom-->
     <packaging>pom</packaging>
