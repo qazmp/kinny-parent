@@ -47,7 +47,7 @@
 
     <bean class="com.kinny.shop.realm.ShiroRealm" id="shiroRealm">
         <property name="credentialsMatcher" ref="credentialsMatcher"></property>
-        <property name="sellerService" ref="sellerService"></property>
+        <property name="sellerService" ref="sellerService1"></property>
     </bean>
 
     <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher" id="credentialsMatcher">
@@ -61,11 +61,15 @@
     </bean>
 
 
-    <dubbo:application name="kinny-shop-web"></dubbo:application>
+    <!-- Duplicate application configs: <dubbo:application name="kinny-shop-web" id="kinny-shop-web" /> and <dubbo:application name="kinny-shop-web" id="kinny-shop-web2" />-->
+    <!--<dubbo:application name="kinny-shop-web"></dubbo:application>-->
 
     <dubbo:registry address="zookeeper://192.168.25.130:2181"/>
 
-    <dubbo:reference interface="com.kinny.sellergoods.service.SellerService" id="sellerService" />
+    <!--Duplicate spring bean id sellerService-->
+    <dubbo:reference interface="com.kinny.sellergoods.service.SellerService" id="sellerService1" />
+
+
 
 
 

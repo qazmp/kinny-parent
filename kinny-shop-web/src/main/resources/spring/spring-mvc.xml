@@ -44,6 +44,4 @@
     <dubbo:annotation package="com.kinny.shop.controller"/>
 
 
-
-
 </beans>
