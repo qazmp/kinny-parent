@@ -9,8 +9,6 @@
 
     <dubbo:application name="kinny-sellergoods-service"/>
 
-    <dubbo:registry address="zookeeper://192.168.25.130:2181"/>
-
     <dubbo:annotation package="com.kinny.sellergoods.service.impl" />
 
 

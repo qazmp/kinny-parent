@@ -30,8 +30,6 @@
 
     <dubbo:application name="kinny-search-web"></dubbo:application>
 
-    <dubbo:registry protocol="zookeeper" address="192.168.25.130:2181"></dubbo:registry>
-
     <dubbo:annotation package="com.kinny.search.controller"></dubbo:annotation>
 
 

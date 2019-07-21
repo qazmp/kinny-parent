@@ -48,8 +48,6 @@
 
     <dubbo:application name="kinny-manager-web"/>
 
-    <dubbo:registry address="zookeeper://192.168.25.130:2181"/>
-
     <dubbo:annotation package="com.kinny.manager.controller"/>
 
 

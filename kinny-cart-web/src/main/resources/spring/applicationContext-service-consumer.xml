@@ -13,8 +13,6 @@
 
     <dubbo:application name="kinny-cart-web"></dubbo:application>
 
-    <dubbo:registry address="zookeeper://192.168.25.130:2181"></dubbo:registry>
-
     <dubbo:annotation package="com.kinny.cart.web.controller"></dubbo:annotation>
 
 

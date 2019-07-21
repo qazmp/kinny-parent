@@ -14,8 +14,6 @@
 
     <dubbo:protocol port="20880"></dubbo:protocol>
 
-    <dubbo:registry address="zookeeper://192.168.25.130:2181"></dubbo:registry>
-
     <dubbo:annotation package="com.kinny.pay.service.impl"></dubbo:annotation>
 
 

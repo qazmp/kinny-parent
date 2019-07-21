@@ -8,8 +8,6 @@
     <!--暴露服务到注册中心 初始化-->
     <dubbo:application name="kinny-content-service"></dubbo:application>
 
-    <dubbo:registry protocol="zookeeper" address="192.168.25.130:2181"></dubbo:registry>
-
     <dubbo:protocol port="20882"></dubbo:protocol>
 
     <dubbo:annotation package="com.kinny.content.service.impl"></dubbo:annotation>

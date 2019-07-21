@@ -8,8 +8,6 @@
 
     <dubbo:protocol port="20889"></dubbo:protocol>
 
-    <dubbo:registry address="zookeeper://192.168.25.130:2181"></dubbo:registry>
-
     <dubbo:annotation package="com.kinny.seckill.service.impl"></dubbo:annotation>
 
 
