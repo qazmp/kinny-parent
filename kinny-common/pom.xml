@@ -15,7 +15,23 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <environment>dev</environment>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <environment>dev</environment>
+            </properties>
+        </profile>
+        <profile>
+            <id>pro</id>
+            <properties>
+                <environment>pro</environment>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -55,5 +71,19 @@
             <version>${zkclient.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <filters>
+            <filter>
+                src/main/resources/filters/dubbo_${environment}.properties
+            </filter>
+        </filters>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
 
 </project>
